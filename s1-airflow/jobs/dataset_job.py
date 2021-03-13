@@ -11,8 +11,8 @@ def transform(data):
     output = data[~data["name"].isna()]
 
     # 2. Split full name to first and last name
-    split = split_names(output)
-    output = split.merge(output[["price"]])
+    split = split_names(output["name"])
+    output = split.merge(output[["price"]], left_index=True, right_index=True)
 
     # 3. Remove any zeroes prepended to price
     output["price"] = output["price"].astype(np.float)
@@ -22,3 +22,15 @@ def transform(data):
 
     return output
 
+
+def main():
+    # Extract data
+    # TODO: Convert path to dynamic
+    data = pd.read_csv("data/dataset1.csv")
+
+    # Transform data
+    data = transform(data)
+
+    # Load data
+    # TODO: Convert path to dynamic
+    data.to_csv("data/processed_dataset1.csv", index=False)
