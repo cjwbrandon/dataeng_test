@@ -1,0 +1,10 @@
+FROM python:3.7
+
+COPY requirements requirements
+RUN pip3 install -r requirements/requirements.txt -r requirements/requirements.test.txt
+
+COPY pytest.ini pytest.ini
+COPY jobs jobs
+ENV PYTHONPATH=./
+
+CMD ["pytest", "-c", "pytest.ini"]
