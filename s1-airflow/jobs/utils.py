@@ -16,7 +16,7 @@ def split_names(names):
     AssertionException
         names is empty.
     """
-    assert len(data) != 0, "Invalid input. Empty series."
+    assert len(names) != 0, "Invalid input. Empty series."
 
     return names.str.rsplit(" ", n=1, expand=True).rename(
         columns={0: "first_name", 1: "last_name"}
