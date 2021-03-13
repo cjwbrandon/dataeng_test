@@ -12,3 +12,8 @@ def test_split_names():
         )
     )
 
+
+def test_split_names_empty():
+    data = pd.Series()
+    with pytest.raises(AssertionError):
+        split_names(data)
