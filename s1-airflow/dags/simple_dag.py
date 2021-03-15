@@ -16,6 +16,7 @@ default_args = {
     "retry_delay": timedelta(minutes=30),
 }
 
+# Create dag
 dag = DAG(
     dag_id="simple_dag",
     default_args=default_args,
@@ -23,4 +24,5 @@ dag = DAG(
     schedule_interval="0 1 * * *",
 )
 
+# Create processing job for the dataset.
 dataset_job = PythonOperator(task_id="dataset_job", python_callable=dj.main, dag=dag)

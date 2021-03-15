@@ -1,0 +1,72 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=simple_password
+      - POSTGRES_DB=airflow
+
+  webserver:
+    image: apache/airflow:1.10.12-python3.7
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=Local
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=simple_password
+      - POSTGRES_DB=airflow
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:simple_password@postgres:5432/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - FERNET_KEY=rcvHBjIm_RY9Ds15UxWi_H_6h3wnUiTsX7IRTeX8NTk=
+      - AIRFLOW__CORE__AIRFLOW_HOME=/opt/airflow/
+      - AIRFLOW__WEBSERVER__WORKERS=2
+      - AIRFLOW__WEBSERVER__WORKER_REFRESH_INTERVAL=1800
+    volumes:
+      - ./dags:/opt/airflow/dags
+    ports:
+      - "8081:8080"
+    command: bash -c "airflow initdb && airflow webserver"
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  scheduler:
+    image: apache/airflow:1.10.12-python3.7
+    restart: always
+    depends_on:
+      - webserver
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=Local
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=simple_password
+      - POSTGRES_DB=airflow
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:simple_password@postgres:5432/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - FERNET_KEY=rcvHBjIm_RY9Ds15UxWi_H_6h3wnUiTsX7IRTeX8NTk=
+      - AIRFLOW__CORE__AIRFLOW_HOME=/opt/airflow/
+    command: bash -c "sleep 30 && airflow scheduler"
+
+  # worker:
+  #   image: apache/airflow:1.10.12-python3.7
+  #   restart: always
+  #   depends_on:
+  #     - postgres
+  #     - webserver
+  #   volumes:
+  #     - ./dags:/opt/airflow/dags
+  #   environment:
+  #     - EXECUTOR=Local
+  #     - POSTGRES_USER=airflow
+  #     - POSTGRES_PASSWORD=simple_password
+  #     - POSTGRES_DB=airflow
+  #     - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:simple_password@postgres:5432/airflow
+  #     - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+  #     - FERNET_KEY=rcvHBjIm_RY9Ds15UxWi_H_6h3wnUiTsX7IRTeX8NTk=
+  #     - AIRFLOW__CORE__AIRFLOW_HOME=/opt/airflow/
+  #   command: bash -c "sleep 30 && airflow worker"

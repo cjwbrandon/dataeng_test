@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from utils import split_names
+from jobs.utils import split_names
 
 
 def transform(data):
@@ -25,12 +25,12 @@ def transform(data):
 
 def main():
     # Extract data
-    # TODO: Convert path to dynamic
+    # TODO: Make path dynamic
     data = pd.read_csv("data/dataset1.csv")
 
     # Transform data
     data = transform(data)
 
     # Load data
-    # TODO: Convert path to dynamic
+    # TODO: Make path dynamic
     data.to_csv("data/processed_dataset1.csv", index=False)
