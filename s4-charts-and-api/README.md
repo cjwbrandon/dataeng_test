@@ -1,0 +1,2 @@
+# Section 4: Charts and APIs
+For this section, I've used the `Requests` library to consume the API and `Seaborn` for the visualisations. All code is done in python and can be found in the python notebook. I've chosen to use a python notebook as it is more convenient for experimenting with visualisations.
